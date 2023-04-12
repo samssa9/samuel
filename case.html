@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Website</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        background-color: #e2dae9;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="trip-chart"></canvas>
+    <script>
+      // Function to read data from CSV file
+      function readCSV(callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            callback(xhr.responseText);
+          }
+        };
+        xhr.open("GET", "case.html", true);
+        xhr.send();
+      }
+
+      // Initialize chart with default data
+      const tripData = {
+        labels: ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'lørdag', 'Søndag'],
+        datasets: [{
+          label: 'Total Trips',
+          data: [100, 150, 200, 175, 220, 190, 120],
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      };
+
+      const tripChart = new Chart(document.getElementById('trip-chart'), {
+        type: 'bar',
+        data: tripData,
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+
+      // Read data from CSV file and update chart
+      readCSV(function(data) {
+        // Parse CSV data into arrays
+        var labels = [];
+        var values = [];
+        var rows = data.split("\n");
+        for (var i = 0; i < rows.length; i++) {
+          var row = rows[i].split(",");
+          labels.push(row[0]);
+          values.push(row[1]);
+        }
+
+        // Update chart data
+        tripChart.data.labels = labels;
+        tripChart.data.datasets[0].data = values;
+        tripChart.update();
+      });
+    </script>
+  </body>
+</html>
